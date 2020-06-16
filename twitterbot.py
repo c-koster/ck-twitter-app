@@ -36,12 +36,11 @@ class CustomStreamListener(StreamListener):
         return False
 
 
-
 def extract_emojis(str):
   return ''.join(c for c in str if c in emoji.UNICODE_EMOJI)
 
-if __name__ == '__main__':
-    zip = '20002'
+
+def stream(zip):
     if len(sys.argv) == 2:
         zip = sys.argv[1]
 
@@ -66,3 +65,9 @@ if __name__ == '__main__':
 
     print("streaming all emojis from: " + d['name'] + ", zip=" + zip)
     stream.filter(locations=coords)
+
+
+
+
+if __name__ == '__main__':
+    strea('20002')

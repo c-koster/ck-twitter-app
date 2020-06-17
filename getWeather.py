@@ -8,7 +8,6 @@ import urllib.request
 import json
 
 
-
 def run():
     if len(sys.argv) < 2:
         # print usage statement if improper number of args
@@ -22,7 +21,6 @@ def run():
 
 
 def get_temperature(zip_code):
-
     url = 'http://api.openweathermap.org/data/2.5/weather?zip=' + zip_code + ',us&APPID=9838b264525602b46f0b2ef8c191eef8&units=imperial'
     with urllib.request.urlopen(url) as webpage:
         contents = webpage.read().decode('utf-8')

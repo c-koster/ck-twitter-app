@@ -1,8 +1,9 @@
 """
-Use ORM to build tweet objects/events, and store them in postgres
+Use flask ORM to build tweet objects/events and store them into postgres
 """
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import and_
 
 from datetime import datetime, timedelta
 
@@ -13,6 +14,7 @@ db_string = "postgres://rrxfutkudyqfwo:4e3e8e27b8eb4c1f73e90c5cf6e3f2c4f3a1da373
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = db_string
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 
@@ -22,15 +24,24 @@ class Example(db.Model):
     zipcode = db.Column(db.String,nullable=False)
     text = db.Column(db.String)
     t1 = db.Column(db.DateTime, nullable=False)
-    t2 = db.Column(db.DateTime, default=t1-timedelta(hours=1))
+    t2 = db.Column(db.DateTime, nullable=False) # some time ago
 
     def fill_text(self):
         # query by time and zipcode
-        tweets = Tweet.query.all()
+        tweets = Tweet.query.filter(and_(Tweet.timestamp >= self.t2, Tweet.timestamp < self.t1,Tweet.zipcode == self.zipcode)).all()
+        total = ''
         for t in tweets:
-            self.text.append(t.text)
-            #session.delete(t) # optionally delete exampled tweets to
+            total += t.text
+            #session.delete(t) # optionally delete example-ingested tweets to save row space
+        self.text = total
+        db.session.commit()
 
+    def create_json(self):
+        d = {"props":{},"contents":{}}
+        for emoji in self.text:
+            d["contents"][emoji] = d["contents"].get(emoji, 0) + 1
+        d["props"]["zip"] = self.zipcode
+        return d
 
 class Tweet(db.Model):
     # this table offers temporary storage for individual tweets
@@ -39,24 +50,29 @@ class Tweet(db.Model):
     zipcode = db.Column(db.String,nullable=False)
     text = db.Column(db.String,nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.now)
+    # recorded_at
 
     def add_self(self):
         db.session.add(self)
         db.session.commit()
 
+    def print_self(self):
+        return self.text
 
-@app.route("/")
-def index():
-    """
-    Index page to stream
-    """
-    return "<h1> hello world! </h1>"
 
+class Weather(db.Model):
+    __tablename__ = 'weather'
+    id = db.Column(db.Integer,primary_key=True)
+    zipcode = db.Column(db.String,nullable=False)
+    description = db.Column(db.String,nullable=False)
+    temperature = db.Column(db.Float,nullable=False)
+    recorded_at = db.Column(db.DateTime, default=datetime.now)
 
 
 if __name__== '__main__':
+
     with app.app_context():
-        tweets = Tweet.query.all()
+        #db.create_all()
+        #tweets = Tweet.query.all()
         for t in tweets:
             print(f"{t.zipcode} at {t.timestamp} said: {t.text}")
-    #db.create_all()

@@ -70,7 +70,6 @@ class Tweet(db.Model):
 
     def add_self(self):
         db.session.add(self)
-        print(self.timestamp)
         db.session.commit()
 
     def print_self(self):
@@ -88,6 +87,7 @@ class Weather(db.Model):
 
 
 if __name__== '__main__':
+    # note: you can run this test code to print every example. 
 
     with app.app_context():
         #db.create_all()

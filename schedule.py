@@ -1,4 +1,6 @@
 """
+This script to be run using crontab, every (8) hours.
+
 This should happen at each time interval:
  1 pull tweets out of the tweets table and create an example for each unique zipcode found (1).
  2 record temperature in weather table

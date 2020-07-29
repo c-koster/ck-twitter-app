@@ -1,7 +1,3 @@
-# postgres management modules
-from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker
-
 # import twitter modules
 from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
@@ -11,9 +7,9 @@ from tweepy import Stream
 from getWeather import get_temperature
 from models import *
 import emoji
+from datetime import datetime
 
-
-#  credentials go here --
+#  credentials go here -- bad bad idea
 consumer_key = "oi8Zn76YmU8tN57OvZTOqlPw3"
 consumer_secret = "cWDmBMPFzOjRLv11DyG81aWWkwI5uVTNjk8dHrFc6ERJfpPtzZ"
 access_token = "1208572114019770368-4d6RZD2oCYbLLM2au0JlShUxvncG4a"
@@ -34,13 +30,15 @@ class CustomStreamListener(StreamListener):
         """
         s = extract_emojis(status.text)
         if s != '':
-            t = Tweet(zipcode=zip,text=s)
-            t.add_self()
+            t = Tweet(zipcode=zip,text=s,timestamp=datetime.now())
+            # create instance of a Tweet class.
+            t.add_self() # tell it to commit into the collection of tweets.
             print(s)
         return True
 
     def on_error(self, status_code):
         print('Error: ' + repr(status_code))
+        # TODO should store errors in sql too, wait (120) seconds and return True
         return False
 
 
@@ -49,23 +47,26 @@ def extract_emojis(str):
 
 
 def stream():
+    """
+    I've been running this script indefinitely with a nohup command
+    """
     d = get_temperature(zip)
     box_radius = .3
+    # define a coordinate box.
     coords = [d['coord']['lon']-box_radius, d['coord']['lat']-box_radius,d['coord']['lon']+box_radius, d['coord']['lat']+box_radius]
-    """
-    # oxford coordinates over-write
-    p = 51.752022
-    q = -1.257677
-    coords = [p-box_radius, q-box_radius,p+box_radius, q+box_radius]
-    """
+    # oxford coordinates over-write -- see below
+    #p = 51.752022
+    #q = -1.257677
+    #coords = [p-box_radius, q-box_radius,p+box_radius, q+box_radius]
+
     temp_imperial = d['main']['temp']
     #filter = "point_radius:[" + str(coords[0]) + " " + str(coords[1]) +" 25mi]"
     l = CustomStreamListener()
     auth = OAuthHandler(consumer_key, consumer_secret)
     auth.set_access_token(access_token, access_token_secret)
     stream = Stream(auth, l)
-    print("streaming all emojis from: " + d['name'] + ", zip=" + zip)
-    stream.filter(locations=coords)
+    print("stream all emojis from: " + d['name'] + ", zip=" + zip)
+    stream.filter(locations=coords) # start the stream
 
 
 if __name__ == '__main__':

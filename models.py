@@ -43,6 +43,22 @@ class Example(db.Model):
         d["props"]["zip"] = self.zipcode
         return d
 
+
+    def create_json_with_weather(self):
+        # this method queries for his friend in the weather table
+        d = {"props":{},"contents":{},"weather":{}}
+        for emoji in self.text:
+            d["contents"][emoji] = d["contents"].get(emoji, 0) + 1
+        d["props"]["zip"] = self.zipcode
+        try:
+            w = Weather.query.filter_by(recorded_at=self.t1).first()
+            d["weather"] = {"description":w.description,"temperature":w.temperature}
+        except AttributeError:
+            d["weather"] = {"description":"oops, no entry","temperature":67}
+            # currently just adding a fake temperature,, but I should manage the issue when I don't get a timestamp match...
+        return d
+
+
 class Tweet(db.Model):
     # this table offers temporary storage for individual tweets
     __tablename__ = 'tweets'
@@ -54,6 +70,7 @@ class Tweet(db.Model):
 
     def add_self(self):
         db.session.add(self)
+        print(self.timestamp)
         db.session.commit()
 
     def print_self(self):
@@ -69,10 +86,19 @@ class Weather(db.Model):
     recorded_at = db.Column(db.DateTime, default=datetime.now)
 
 
+
 if __name__== '__main__':
 
     with app.app_context():
         #db.create_all()
         #tweets = Tweet.query.all()
+        examples = Example.query.all()
+
+        for i in examples:
+            #i.fill_text()
+            p = i.create_json_with_weather()
+            print(p)
+        """
         for t in tweets:
             print(f"{t.zipcode} at {t.timestamp} said: {t.text}")
+        """

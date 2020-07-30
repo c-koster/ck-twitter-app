@@ -4,13 +4,14 @@ Use flask ORM to build tweet objects/events and store them into postgres
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import and_
+from dotenv import load_dotenv
 
 from datetime import datetime, timedelta
+import os
 
-# Set up database -- first check if you forgot your environment variables
+load_dotenv()
 # need to create pointer named db
-
-db_string = "postgres://rrxfutkudyqfwo:4e3e8e27b8eb4c1f73e90c5cf6e3f2c4f3a1da373a3cd839b864cdf54a90b89b@ec2-52-71-85-210.compute-1.amazonaws.com:5432/du11chbkt78no"
+db_string = os.getenv("DB_STRING")
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = db_string
@@ -87,7 +88,7 @@ class Weather(db.Model):
 
 
 if __name__== '__main__':
-    # note: you can run this test code to print every example. 
+    # note: you can run this test code to print every example.
 
     with app.app_context():
         #db.create_all()

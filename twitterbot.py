@@ -3,18 +3,21 @@ from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
 from tweepy import Stream
 
+from dotenv import load_dotenv
+import os
 # import extras
 from getWeather import get_temperature
 from models import *
 import emoji
 from datetime import datetime
 
-#  credentials go here -- bad bad idea
-consumer_key = "oi8Zn76YmU8tN57OvZTOqlPw3"
-consumer_secret = "cWDmBMPFzOjRLv11DyG81aWWkwI5uVTNjk8dHrFc6ERJfpPtzZ"
-access_token = "1208572114019770368-4d6RZD2oCYbLLM2au0JlShUxvncG4a"
-access_token_secret = "IOdOYWJHehVH6X1WYRWU79TftjIoJjRohaxQA54yPHztS"
-zip = "11201"
+#  credentials go here
+load_dotenv()
+consumer_key = os.getenv("CONSUMER_KEY")
+consumer_secret = os.getenv("CONSUMER_SECRET")
+access_token = os.getenv("ACCESS_TOKEN")
+access_token_secret = os.getenv("ACCESS_TOKEN_SECRET")
+zip = "11201" # hardcoded zipcode for brooklyn, ny 
 
 class CustomStreamListener(StreamListener):
     """ A listener handles tweets that are received from the stream.

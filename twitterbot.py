@@ -3,7 +3,8 @@ from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
 from tweepy import Stream
 
-from dotenv import load_dotenv
+# env variables
+from boto.s3.connection import S3Connection
 import os
 # import extras
 from getWeather import get_temperature
@@ -12,8 +13,13 @@ import emoji
 from datetime import datetime
 import time
 
+
+
+
 #  credentials go here
-load_dotenv()
+s3 = S3Connection(os.environ['S3_KEY'], os.environ['S3_SECRET'])
+
+
 consumer_key = os.getenv("CONSUMER_KEY")
 consumer_secret = os.getenv("CONSUMER_SECRET")
 access_token = os.getenv("ACCESS_TOKEN")

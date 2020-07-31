@@ -4,12 +4,15 @@ Use flask ORM to build tweet objects/events and store them into postgres
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import and_
-from dotenv import load_dotenv
 
 from datetime import datetime, timedelta
-import os
 
-load_dotenv()
+# get environment variables
+from boto.s3.connection import S3Connection
+import os
+s3 = S3Connection(os.environ['S3_KEY'], os.environ['S3_SECRET'])
+
+
 # need to create pointer named db
 db_string = os.getenv("DB_STRING")
 

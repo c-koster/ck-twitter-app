@@ -9,9 +9,9 @@ import os
 from getWeather import get_temperature
 from models import *
 import emoji
+
 from datetime import datetime
 import time
-
 import pytz
 
 #  credentials go here
@@ -41,6 +41,7 @@ class CustomStreamListener(StreamListener):
             t = Tweet(zipcode=zip,text=s,timestamp=datetime.now(tz))
             # create instance of a Tweet class.
             t.add_self() # tell it to commit into the collection of tweets.
+            print(datetime.now(tz))
             print(s)
         return True
 

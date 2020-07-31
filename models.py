@@ -86,12 +86,24 @@ class Weather(db.Model):
     recorded_at = db.Column(db.DateTime, default=datetime.now)
 
 
+class Log(db.model):
+    __tablename__ = 'weather'
+    id = db.Column(db.Integer,primary_key=True)
+    error_code = db.Column(db.Integer)
+    timestamp = db.Column(db.DateTime, default=datetime.now)
+
+    def add_self(self):
+        db.session.add(self)
+        db.session.commit()
+
+
+
 
 if __name__== '__main__':
     # note: you can run this test code to print every example.
 
     with app.app_context():
-        #db.create_all()
+        db.create_all()
         #tweets = Tweet.query.all()
         examples = Example.query.all()
 

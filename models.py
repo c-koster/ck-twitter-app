@@ -87,7 +87,7 @@ class Weather(db.Model):
 
 
 class Log(db.Model):
-    __tablename__ = 'weather'
+    __tablename__ = 'errors'
     id = db.Column(db.Integer,primary_key=True)
     error_code = db.Column(db.Integer)
     timestamp = db.Column(db.DateTime, default=datetime.now)

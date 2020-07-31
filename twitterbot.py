@@ -10,6 +10,7 @@ from getWeather import get_temperature
 from models import *
 import emoji
 from datetime import datetime
+import time
 
 #  credentials go here
 load_dotenv()
@@ -17,7 +18,7 @@ consumer_key = os.getenv("CONSUMER_KEY")
 consumer_secret = os.getenv("CONSUMER_SECRET")
 access_token = os.getenv("ACCESS_TOKEN")
 access_token_secret = os.getenv("ACCESS_TOKEN_SECRET")
-zip = "11201" # hardcoded zipcode for brooklyn, ny 
+zip = "11201" # hardcoded zipcode for brooklyn, ny
 
 class CustomStreamListener(StreamListener):
     """ A listener handles tweets that are received from the stream.
@@ -41,8 +42,9 @@ class CustomStreamListener(StreamListener):
 
     def on_error(self, status_code):
         print('Error: ' + repr(status_code))
-        # TODO should store errors in sql too, wait (120) seconds and return True
-        return False
+        t = Log(timestamp=datetime.now(),error_code=status_code)
+        time.sleep(120)
+        return True
 
 
 def extract_emojis(str):
@@ -69,7 +71,7 @@ def stream():
     auth.set_access_token(access_token, access_token_secret)
     stream = Stream(auth, l)
     print("stream all emojis from: " + d['name'] + ", zip=" + zip)
-    stream.filter(locations=coords) # start the stream
+    stream.filter(locations=coords,is_async=True) # start the stream
 
 
 if __name__ == '__main__':

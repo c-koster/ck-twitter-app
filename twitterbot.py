@@ -12,6 +12,7 @@ import emoji
 from datetime import datetime
 import time
 
+import pytz
 
 #  credentials go here
 consumer_key = os.environ.get("CONSUMER_KEY")
@@ -19,6 +20,9 @@ consumer_secret = os.environ.get("CONSUMER_SECRET")
 access_token = os.environ.get("ACCESS_TOKEN")
 access_token_secret = os.environ.get("ACCESS_TOKEN_SECRET")
 zip = "11201" # hardcoded zipcode for brooklyn, ny
+
+#tz pointer
+tz = pytz.timezone(os.environ.get("TZ"))
 
 class CustomStreamListener(StreamListener):
     """ A listener handles tweets that are received from the stream.
@@ -34,7 +38,7 @@ class CustomStreamListener(StreamListener):
         """
         s = extract_emojis(status.text)
         if s != '':
-            t = Tweet(zipcode=zip,text=s,timestamp=datetime.now())
+            t = Tweet(zipcode=zip,text=s,timestamp=datetime.now(tz))
             # create instance of a Tweet class.
             t.add_self() # tell it to commit into the collection of tweets.
             print(s)
@@ -42,7 +46,7 @@ class CustomStreamListener(StreamListener):
 
     def on_error(self, status_code):
         print('Error: ' + repr(status_code))
-        t = Log(timestamp=datetime.now(),error_code=status_code)
+        t = Log(timestamp=datetime.now(tz),error_code=status_code)
         time.sleep(120)
         return True
 

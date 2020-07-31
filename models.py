@@ -8,13 +8,11 @@ from sqlalchemy import and_
 from datetime import datetime, timedelta
 
 # get environment variables
-from boto.s3.connection import S3Connection
 import os
-s3 = S3Connection(os.environ['S3_KEY'], os.environ['S3_SECRET'])
 
 
 # need to create pointer named db
-db_string = os.getenv("DB_STRING")
+db_string = os.environ.get("DB_STRING")
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = db_string

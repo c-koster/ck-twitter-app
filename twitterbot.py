@@ -4,7 +4,6 @@ from tweepy import OAuthHandler
 from tweepy import Stream
 
 # env variables
-from boto.s3.connection import S3Connection
 import os
 # import extras
 from getWeather import get_temperature
@@ -14,15 +13,11 @@ from datetime import datetime
 import time
 
 
-
 #  credentials go here
-s3 = S3Connection(os.environ['S3_KEY'], os.environ['S3_SECRET'])
-
-
-consumer_key = os.getenv("CONSUMER_KEY")
-consumer_secret = os.getenv("CONSUMER_SECRET")
-access_token = os.getenv("ACCESS_TOKEN")
-access_token_secret = os.getenv("ACCESS_TOKEN_SECRET")
+consumer_key = os.environ.get("CONSUMER_KEY")
+consumer_secret = os.environ.get("CONSUMER_SECRET")
+access_token = os.environ.get("ACCESS_TOKEN")
+access_token_secret = os.environ.get("ACCESS_TOKEN_SECRET")
 zip = "11201" # hardcoded zipcode for brooklyn, ny
 
 class CustomStreamListener(StreamListener):

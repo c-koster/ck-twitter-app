@@ -48,6 +48,7 @@ class CustomStreamListener(StreamListener):
     def on_error(self, status_code):
         print('Error: ' + repr(status_code))
         t = Log(timestamp=datetime.now(tz),error_code=status_code)
+        t.add_self()
         time.sleep(120)
         return True
 

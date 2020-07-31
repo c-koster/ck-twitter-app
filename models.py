@@ -6,13 +6,20 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import and_
 
 from datetime import datetime, timedelta
+import pytz
+
 
 # get environment variables
 import os
 
 
+
+tz = pytz.timezone(os.environ.get("TZ"))
+
 # need to create pointer named db
 db_string = os.environ.get("DB_STRING")
+
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = db_string
@@ -67,7 +74,7 @@ class Tweet(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     zipcode = db.Column(db.String,nullable=False)
     text = db.Column(db.String,nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime.now)
+    timestamp = db.Column(db.DateTime, default=datetime.now(tz))
     # recorded_at
 
     def add_self(self):
@@ -84,14 +91,14 @@ class Weather(db.Model):
     zipcode = db.Column(db.String,nullable=False)
     description = db.Column(db.String,nullable=False)
     temperature = db.Column(db.Float,nullable=False)
-    recorded_at = db.Column(db.DateTime, default=datetime.now)
+    recorded_at = db.Column(db.DateTime, default=datetime.now(tz))
 
 
 class Log(db.Model):
     __tablename__ = 'errors'
     id = db.Column(db.Integer,primary_key=True)
     error_code = db.Column(db.Integer)
-    timestamp = db.Column(db.DateTime, default=datetime.now)
+    timestamp = db.Column(db.DateTime, default=datetime.now(tz))
 
     def add_self(self):
         db.session.add(self)

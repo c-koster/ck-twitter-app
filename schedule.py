@@ -25,14 +25,9 @@ def compile_example(time_now,zip):
     db.session.add(w)
     db.session.add(e)
     db.session.commit()
+    e.fill_text()
 
 if __name__== "__main__":
     #db.session.add(e)
     #db.session.commit()
-    compile_example(time_now=datetime.now(),zip="11201")
-    examples = Example.query.all()
-
-    for i in examples:
-        i.fill_text()
-        p = i.create_json()
-        print(p)
+    compile_example(time_now=datetime.utcnow(),zip="11201")

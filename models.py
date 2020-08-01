@@ -37,7 +37,7 @@ class Example(db.Model):
         total = ''
         for t in tweets:
             total += t.text
-            session.delete(t) # optionally delete example-ingested tweets to save row space
+            db.session.delete(t) # optionally delete example-ingested tweets to save row space
         self.text = total
         db.session.commit()
 

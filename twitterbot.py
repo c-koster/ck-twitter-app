@@ -3,8 +3,6 @@ from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
 from tweepy import Stream
 
-# env variables
-import os
 # import extras
 from getWeather import get_temperature
 from models import *
@@ -13,13 +11,21 @@ import emoji
 from datetime import datetime
 import time
 
+# env variables
+import os
+
+# if running me locally (ie not heroku)
+if not (os.environ.get("LOCAL")):
+    from dotenv import load_dotenv
+    load_dotenv() # fetch env variables from my .env file
+
+
 #  credentials go here
 consumer_key = os.environ.get("CONSUMER_KEY")
 consumer_secret = os.environ.get("CONSUMER_SECRET")
 access_token = os.environ.get("ACCESS_TOKEN")
 access_token_secret = os.environ.get("ACCESS_TOKEN_SECRET")
 zip = "11201" # hardcoded zipcode for brooklyn, ny
-
 
 
 class CustomStreamListener(StreamListener):

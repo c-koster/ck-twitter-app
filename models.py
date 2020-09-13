@@ -11,6 +11,9 @@ from datetime import datetime, timedelta
 # get environment variables
 import os
 
+if not (os.environ.get("LOCAL")):
+    from dotenv import load_dotenv
+    load_dotenv() # fetch env variables from my .env file
 
 # need to create pointer named db
 db_string = os.environ.get("DB_STRING")

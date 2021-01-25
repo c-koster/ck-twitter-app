@@ -2,6 +2,9 @@
 hold some machinery to make my weather predictions:
 1 join on timestamp to pair the weather table and the examples table (use class method like get_y)
 2 create a key based upon the top 50? most commonly used emojis
+
+
+i need to re-write this entire thing using the numpy vectorizer
 """
 import numpy as np
 

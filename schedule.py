@@ -1,5 +1,5 @@
 """
-This script to be run using crontab, every (8) hours.
+This script to be run using crontab every hour. or just compile it later
 
 This should happen at each time interval:
  1 pull tweets out of the tweets table and create an example for each unique zipcode found (1).
@@ -17,15 +17,15 @@ def compile_example(time_now,zip):
     """
     t = get_temperature(zip)
     # use flask's ORM to create the two data rows
-    eight_hours_ago = time_now - timedelta(hours = 8)
+    one_hour_ago = time_now - timedelta(hours = 1)
     w = Weather(zipcode=zip,recorded_at=time_now,description=t['weather'][0]['main'],temperature=t['main']['temp'])
-    e = Example(zipcode=zip,t1=time_now,t2=eight_hours_ago)
+    #e = Example(zipcode=zip,t1=time_now,t2=one_hour_ago)
 
     # insert both into database
     db.session.add(w)
-    db.session.add(e)
+    #db.session.add(e)
     db.session.commit()
-    e.fill_text()
+    #e.fill_text()
 
 if __name__== "__main__":
     #db.session.add(e)

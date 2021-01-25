@@ -63,7 +63,8 @@ def extract_emojis(str):
 
 def stream():
     """
-    I've been running this script indefinitely with a nohup command
+    I've been running this script indefinitely with a nohup command.
+    Try 'screen' instead?
     """
     d = get_temperature(zip)
     box_radius = .3

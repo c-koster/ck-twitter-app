@@ -18,10 +18,11 @@ if not (os.environ.get("LOCAL")):
 # need to create pointer named db
 db_string = os.environ.get("DB_STRING")
 
-
-
+base = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = db_string
+
+#app.config['SQLALCHEMY_DATABASE_URI'] = db_string
+app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///" + os.path.join(base, 'tweets.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -40,7 +41,7 @@ class Example(db.Model):
         total = ''
         for t in tweets:
             total += t.text
-            db.session.delete(t) # optionally delete example-ingested tweets to save row space
+            #db.session.delete(t) # optionally delete example-ingested tweets to save row space
         self.text = total
         db.session.commit()
 
@@ -110,16 +111,20 @@ if __name__== '__main__':
     # note: you can run this test code to print every example.
 
     with app.app_context():
-        #db.create_all()
-
-        #tweets = Tweet.query.all()
+        db.create_all()
+        """
+        tweets = Tweet.query.all()
         examples = Example.query.all()
 
         for i in examples:
-            #i.fill_text()
+            i.fill_text()
             p = i.create_json_with_weather()
             print(p)
+        weather = Weather.query.all()
+        for w in weather:
+            print(f"{w.zipcode} at {w.recorded_at} was: {w.description},Temp={w.temperature}")
         """
+
+
         for t in tweets:
             print(f"{t.zipcode} at {t.timestamp} said: {t.text}")
-        """

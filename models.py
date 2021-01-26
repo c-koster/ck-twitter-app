@@ -4,17 +4,25 @@ Use flask ORM to build tweet objects/events and store them into postgres
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import and_
-from dotenv import load_dotenv
 
 from datetime import datetime, timedelta
+
+
+# get environment variables
 import os
 
-load_dotenv()
-# need to create pointer named db
-db_string = os.getenv("DB_STRING")
+if not (os.environ.get("LOCAL")):
+    from dotenv import load_dotenv
+    load_dotenv() # fetch env variables from my .env file
 
+# need to create pointer named db
+db_string = os.environ.get("DB_STRING")
+
+base = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = db_string
+
+#app.config['SQLALCHEMY_DATABASE_URI'] = db_string
+app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///" + os.path.join(base, 'tweets.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -33,7 +41,7 @@ class Example(db.Model):
         total = ''
         for t in tweets:
             total += t.text
-            #session.delete(t) # optionally delete example-ingested tweets to save row space
+            #db.session.delete(t) # optionally delete example-ingested tweets to save row space
         self.text = total
         db.session.commit()
 
@@ -66,7 +74,7 @@ class Tweet(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     zipcode = db.Column(db.String,nullable=False)
     text = db.Column(db.String,nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime.now)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow())
     # recorded_at
 
     def add_self(self):
@@ -83,14 +91,14 @@ class Weather(db.Model):
     zipcode = db.Column(db.String,nullable=False)
     description = db.Column(db.String,nullable=False)
     temperature = db.Column(db.Float,nullable=False)
-    recorded_at = db.Column(db.DateTime, default=datetime.now)
+    recorded_at = db.Column(db.DateTime, default=datetime.utcnow())
 
 
 class Log(db.Model):
     __tablename__ = 'errors'
     id = db.Column(db.Integer,primary_key=True)
     error_code = db.Column(db.Integer)
-    timestamp = db.Column(db.DateTime, default=datetime.now)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow())
 
     def add_self(self):
         db.session.add(self)
@@ -103,16 +111,20 @@ if __name__== '__main__':
     # note: you can run this test code to print every example.
 
     with app.app_context():
-        #db.create_all()
-
-        #tweets = Tweet.query.all()
+        db.create_all()
+        """
+        tweets = Tweet.query.all()
         examples = Example.query.all()
 
         for i in examples:
-            #i.fill_text()
+            i.fill_text()
             p = i.create_json_with_weather()
             print(p)
+        weather = Weather.query.all()
+        for w in weather:
+            print(f"{w.zipcode} at {w.recorded_at} was: {w.description},Temp={w.temperature}")
         """
+
+
         for t in tweets:
             print(f"{t.zipcode} at {t.timestamp} said: {t.text}")
-        """
